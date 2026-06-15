@@ -223,6 +223,12 @@ with col_izq:
         key="url_input",
     )
 
+    # Opciones — ANTES del botón para que formato/calidad estén definidos
+    with st.expander("⚙️ Opciones yt-dlp"):
+        formato  = st.selectbox("Formato de audio", ["mp3", "m4a", "opus", "flac", "wav"], index=0)
+        calidad  = st.selectbox("Calidad (VBR)", ["0 (máx)", "2", "4", "6", "8 (mín)"], index=0)
+        playlist = st.checkbox("Permitir playlists completas", value=False)
+
     c1, c2 = st.columns([2, 1])
     with c1:
         if st.button("➕ Añadir URL", use_container_width=True):
@@ -267,12 +273,6 @@ with col_izq:
     if nueva_carpeta != st.session_state.carpeta:
         st.session_state.carpeta = nueva_carpeta
 
-    # Opciones adicionales
-    with st.expander("⚙️ Opciones yt-dlp"):
-        formato = st.selectbox("Formato de audio", ["mp3", "m4a", "opus", "flac", "wav"], index=0)
-        calidad = st.selectbox("Calidad (VBR)", ["0 (máx)", "2", "4", "6", "8 (mín)"], index=0)
-        playlist = st.checkbox("Permitir playlists completas", value=False)
-
     # ── API endpoint hint ───────────────────────────────────────────────────────
     st.markdown("---")
     st.markdown("#### API para la extensión Chrome")
@@ -283,6 +283,7 @@ with col_izq:
         language="bash"
     )
     st.caption("La extensión usará este endpoint para añadir URLs sin abrir la app.")
+
 
 # ════════════════════════════════════════════════════════════════════════════════
 # COLUMNA DERECHA — Cola + descarga
