@@ -137,16 +137,25 @@ if "carpeta" not in st.session_state:
 
 # ── Helpers ────────────────────────────────────────────────────────────────────
 YT_RE = re.compile(
-    r"(https?://)?(www\.)?(youtube\.com/watch\?v=|youtu\.be/)[\w\-]+"
+    r"(https?://)?(www\.)?(youtube\.com/(watch\?.*v=|playlist\?.*list=|shorts/)|youtu\.be/)[\w\-]+"
 )
 
 def es_url_valida(url: str) -> bool:
-    return bool(YT_RE.match(url.strip()))
+    return bool(YT_RE.search(url.strip()))
+
+def es_playlist(url: str) -> bool:
+    return "playlist?list=" in url or ("list=" in url and "watch" not in url)
 
 def limpiar_url(url: str) -> str:
-    """Quitar parámetros extra salvo v="""
+    """Normalizar URL conservando list= para playlists y v= para vídeos."""
+    url = url.strip()
+    # Playlist pura
+    m = re.search(r"(https?://(?:www\.)?youtube\.com/playlist\?list=[\w\-]+)", url)
+    if m:
+        return m.group(1)
+    # Vídeo con o sin list=
     m = re.search(r"(https?://(?:www\.)?(?:youtube\.com/watch\?v=|youtu\.be/)[\w\-]+)", url)
-    return m.group(1) if m else url.strip()
+    return m.group(1) if m else url
 
 def obtener_titulo(url: str) -> str:
     try:
@@ -161,15 +170,16 @@ def obtener_titulo(url: str) -> str:
 
 def descargar_url(entrada: dict, carpeta: str, log_q: queue.Queue):
     os.makedirs(carpeta, exist_ok=True)
+    es_pl = es_playlist(entrada["url"])
     cmd = [
         "yt-dlp",
         "-x",
-        "--audio-format", "mp3",
-        "--audio-quality", "0",
+        "--audio-format", entrada.get("formato", "mp3"),
+        "--audio-quality", entrada.get("calidad", "0"),
         "--embed-metadata",
         "--embed-thumbnail",
-        "--no-playlist",
-        "-o", os.path.join(carpeta, "%(artist)s - %(title)s.%(ext)s"),
+        "--yes-playlist" if es_pl else "--no-playlist",
+        "-o", os.path.join(carpeta, "%(playlist_index)s - %(title)s.%(ext)s" if es_pl else "%(artist)s - %(title)s.%(ext)s"),
         entrada["url"],
     ]
     try:
@@ -228,12 +238,14 @@ with col_izq:
                 with st.spinner("Obteniendo título…"):
                     titulo = obtener_titulo(url_limpia)
                 st.session_state.cola.append({
-                    "url": url_limpia,
-                    "titulo": titulo,
-                    "estado": "pendiente",
-                    "log": "",
-                    "inicio": None,
-                    "fin": None,
+                    "url":     url_limpia,
+                    "titulo":  titulo,
+                    "estado":  "pendiente",
+                    "log":     "",
+                    "inicio":  None,
+                    "fin":     None,
+                    "formato": formato,
+                    "calidad": calidad.split(" ")[0],
                 })
                 st.rerun()
 
@@ -319,9 +331,11 @@ with col_der:
         for i, entrada in enumerate(st.session_state.cola):
             cls, texto_badge = badge_map.get(entrada["estado"], ("badge-pending", "?"))
             titulo_corto = entrada["titulo"][:72] + "…" if len(entrada["titulo"]) > 72 else entrada["titulo"]
+            pl_badge = '<span class="badge" style="background:#1a1a3e;color:#a78bfa">▤ playlist</span>' if es_playlist(entrada["url"]) else ""
             st.markdown(f"""
             <div class="url-card">
               <span class="badge {cls}">{texto_badge}</span>
+              {pl_badge}
               <span class="url-text" title="{entrada['url']}">{titulo_corto}</span>
             </div>
             """, unsafe_allow_html=True)
