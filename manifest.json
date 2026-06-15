@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "YT → MP3 Downloader",
+  "version": "1.0",
+  "description": "Añade la URL de YouTube actual a tu cola de descarga local",
+  "permissions": ["activeTab"],
+  "host_permissions": ["http://localhost:8502/*"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16":  "icon16.png",
+      "48":  "icon48.png",
+      "128": "icon128.png"
+    }
+  },
+  "icons": {
+    "16":  "icon16.png",
+    "48":  "icon48.png",
+    "128": "icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.youtube.com/watch*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

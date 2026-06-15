@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YT → MP3</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      width: 300px;
+      background: #0f0f0f;
+      color: #e8e8e8;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px;
+    }
+
+    .header {
+      background: #161616;
+      border-bottom: 2px solid #ff0000;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header .logo { font-size: 1.3rem; }
+    .header h1 { font-size: 0.9rem; font-weight: 600; color: #fff; }
+    .header p  { font-size: 0.7rem; color: #666; margin-top: 1px; }
+
+    .body { padding: 14px 16px; }
+
+    .video-info {
+      background: #161616;
+      border: 1px solid #242424;
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+    }
+    .video-info .label {
+      font-size: 0.68rem;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+    .video-info .title {
+      font-size: 0.82rem;
+      color: #ccc;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+    .video-info .url {
+      font-size: 0.68rem;
+      color: #444;
+      margin-top: 4px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s;
+      margin-bottom: 8px;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-primary { background: #ff0000; color: #fff; }
+    .btn-secondary { background: #1e1e1e; color: #aaa; border: 1px solid #2a2a2a; }
+
+    .status {
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 0.78rem;
+      margin-top: 8px;
+      display: none;
+    }
+    .status.ok    { background: #0d2d1a; color: #3fb950; display: block; }
+    .status.error { background: #2d0d0d; color: #f85149; display: block; }
+    .status.info  { background: #1a1a2e; color: #58a6ff; display: block; }
+
+    .footer {
+      padding: 8px 16px 12px;
+      font-size: 0.68rem;
+      color: #333;
+      border-top: 1px solid #1a1a1a;
+      margin-top: 4px;
+    }
+    .footer a { color: #555; text-decoration: none; }
+    .footer a:hover { color: #aaa; }
+
+    .no-yt {
+      padding: 24px 16px;
+      text-align: center;
+      color: #444;
+      font-size: 0.82rem;
+    }
+    .no-yt .icon { font-size: 2rem; margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <span class="logo">🎵</span>
+    <div>
+      <h1>YT → MP3</h1>
+      <p>Añade a tu cola de descarga local</p>
+    </div>
+  </div>
+
+  <div id="main-content">
+    <!-- Se rellena por popup.js -->
+  </div>
+
+  <div class="footer">
+    App corriendo en <a href="http://localhost:8502" target="_blank">localhost:8502</a>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
